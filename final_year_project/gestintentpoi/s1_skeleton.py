@@ -23,8 +23,8 @@ class PgdSkeleton(PgdLabel):
 
     def __getitem__(self, index):
             res_dict = super().__getitem__(index)
-            v_name = "003.mp4"
-            coord_dict = self.__vpath_to_coords("003.mp4")
+            v_name = "001.mp4"
+            coord_dict = self.__vpath_to_coords("001.mp4")
             res_dict.update(coord_dict)
             return res_dict
 
@@ -54,7 +54,7 @@ class PgdSkeleton(PgdLabel):
     def __predict_from_video(self, video_name):
         if self.predictor is None:
             self.predictor = HumanKeypointPredict()
-        v_path = "C:/Users/srikr/Desktop/Final_year_project/PoliceGestureLong/train/003.mp4"
+        v_path = "C:/Users/srikr/Desktop/Final_year_project/PoliceGestureLong/train/001.mp4"
 
         v_reader = self.__video_reader(v_path)
         native_list = []
@@ -91,5 +91,5 @@ class PgdSkeleton(PgdLabel):
     def remove_generated_skeletons():
         p = Path("generated/coords/")
         shutil.rmtree(p)
-p1 = PgdSkeleton(Path.home() / 'PoliceGestureLong',True, (512,512))
-p1.__getitem__(int(1))   
+#p1 = PgdSkeleton(Path.home() / 'PoliceGestureLong',True, (512,512))
+#p1.__getitem__(int(1))   

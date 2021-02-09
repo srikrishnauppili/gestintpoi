@@ -17,8 +17,6 @@ class Trainer:
         self.clip_len = 15*30
         pgd = PgdHandcraft(Path.home() / 'PoliceGestureLong', True, (512, 512), clip_len=self.clip_len)
         self.data_loader = DataLoader(pgd, batch_size=self.batch_size, shuffle=False, num_workers=settings.num_workers)
-        dataloader_iterator = iter(self.data_loader)
-        print(next(dataloader_iterator))
         self.model = GestureRecognitionModel(batch=self.batch_size)
         self.model.train()
         self.loss = CrossEntropyLoss() 
@@ -31,7 +29,7 @@ class Trainer:
             dataloader_iterator = iter(self.data_loader)
             for i in range(4):
                 ges_data=next(dataloader_iterator)
-               
+                
                 features = torch.cat((ges_data[PG.BONE_LENGTH], ges_data[PG.BONE_ANGLE_COS],
                                       ges_data[PG.BONE_ANGLE_SIN]), dim=2)
                 features = features.permute(1, 0, 2)  

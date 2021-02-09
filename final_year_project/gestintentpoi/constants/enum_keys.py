@@ -43,7 +43,7 @@ class PG(Enum):  # Police Gesture
     VIDEO_PATH = auto()  # path of police gesture video
     VIDEO_NAME = 'VIDEO_NAME'
     GESTURE_LABEL = auto()  # list of gestures corresponding to frames
-
+    #INTENT_LABEL=auto() # list of Intent corresponding to frames
     COORD_NATIVE = auto()  # native keypoint x,y (int)
     COORD_NORM = auto()  # normalized keypoint x,y 0.~1.
 

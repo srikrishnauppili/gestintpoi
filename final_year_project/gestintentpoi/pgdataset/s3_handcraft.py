@@ -12,11 +12,13 @@ class PgdHandcraft(PgdTruncate):
         self.bla = BoneLengthAngle()
 
     def __getitem__(self, index):
-
+        try:
             res_dict = super().__getitem__(index)
             feature_dict = self.bla.handcrafted_features(res_dict[PG.COORD_NORM])
             res_dict.update(feature_dict)
             return res_dict
+        except:
+            print("error")
 
 
 class BoneLengthAngle:

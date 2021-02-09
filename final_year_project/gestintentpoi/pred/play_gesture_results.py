@@ -19,6 +19,7 @@ class Player:
     def play_dataset_video(self, is_train, video_index, show=True):
         self.scd = PgdSkeleton(Path.home() / 'PoliceGestureLong', is_train, self.img_size)
         res = self.scd[video_index]
+        print(res[PG.COORD_NATIVE].shape)
         print('Playing %s' % res[PG.VIDEO_NAME])
         coord_norm_FXJ = res[PG.COORD_NORM]  
         coord_norm_FJX = np.transpose(coord_norm_FXJ, (0, 2, 1)) 
@@ -84,7 +85,20 @@ class Player:
             cv2.imshow("Play saved keypoint results", re_img)
             cv2.waitKey(duration)
         cap.release()
-
+    def play_custom_image(self, img_path):
+        rkr = ResizeKeepRatio((512, 512))
+        img = cv2.imread(img_path)
+        re_img, _, _ = rkr.resize(img, np.zeros((2,)), np.zeros((4,)))
+        gdict = self.gpred.from_img(re_img)
+        gesture = gdict[PG.OUT_ARGMAX]
+        coord_norm_FXJ = gdict[PG.COORD_NORM]
+        coord_norm_FJX = np.transpose(coord_norm_FXJ, (0, 2, 1))  
+        coord_FJX = coord_norm_FJX * np.array(self.img_size)
+        koi = KeypointsOnImage.from_xy_array(coord_FJX[0], shape=re_img.shape)
+        re_img = koi.draw_on_image(re_img)
+        ges_name = self.gesture_dict[gesture]
+        re_img = draw_text(re_img, 50, 100, ges_name, (255, 50, 50), size=40)
+        cv2.imshow("Play saved keypoint results", re_img)
 
     gesture_dict = {
         0: "NO GESTURE",

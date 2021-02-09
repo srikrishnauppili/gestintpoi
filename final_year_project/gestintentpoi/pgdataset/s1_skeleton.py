@@ -1,4 +1,3 @@
-# Predict each frame to coordinates and save to disk for further usages
 from pred.human_keypoint_pred import HumanKeypointPredict
 import pickle
 import shutil
@@ -7,7 +6,7 @@ import cv2
 import numpy as np
 from pgdataset.s0_label import PgdLabel
 from constants.enum_keys import PG
-
+import csv
 
 class PgdSkeleton(PgdLabel):
     """Load coords from disk if exists, else predict coords."""
@@ -21,15 +20,17 @@ class PgdSkeleton(PgdLabel):
             self.coord_folder = Path("generated/coords/test/")
             self.video_folder = data_path / "test"
         self.coord_folder.mkdir(parents=True, exist_ok=True)
-        self.predictor = None  # Lazy initialize keypoint prediction model
+        self.predictor = None  
 
     def __getitem__(self, index):
+        try:
             res_dict = super().__getitem__(index)
             v_name = res_dict[PG.VIDEO_NAME]
             coord_dict = self.__vpath_to_coords(v_name)
-            # keys: 'coord_native', 'coord_norm'
             res_dict.update(coord_dict)
             return res_dict
+        except:
+            print("error")
 
 
     def __vpath_to_coords(self, video_name: str):
@@ -60,8 +61,8 @@ class PgdSkeleton(PgdLabel):
         v_path = self.video_folder / video_name
 
         v_reader = self.__video_reader(v_path)
-        native_list = []  # shape: (num_frames, xy(2), num_keypoints)
-        norm_list = []  # shape: (num_frames, xy(2), num_keypoints)
+        native_list = [] 
+        norm_list = [] 
         for i, frame in enumerate(v_reader):
             coord_dict = self.predictor.get_coordinates(frame)
             native_list.append(coord_dict[PG.COORD_NATIVE])
@@ -82,7 +83,6 @@ class PgdSkeleton(PgdLabel):
         if v_fps != 15:
             raise ValueError("video %s must have a frame rate of 15, currently %d" % (video_path, v_fps))
 
-        # Read frames
         for _ in range(v_size):
             ret, img = cap.read()
             re_img = cv2.resize(img, self.resize_img_size)
@@ -95,5 +95,4 @@ class PgdSkeleton(PgdLabel):
     def remove_generated_skeletons():
         p = Path("generated/coords/")
         shutil.rmtree(p)
-p1 = PgdSkeleton("C:/Users/srikr/Desktop/Final_year_project/PoliceGestureLong/train",True, (512,512))
-p1.__getitem__(1)   
+   
